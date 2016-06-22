@@ -27,6 +27,7 @@ cursor.execute("drop table if exists TeacherOffice")
 sql = """create table TeacherOffice (
          教研室代码 varchar(5) not null primary key,
          名称 varchar(50),
+         地点 varchar(20),
          所在学院 varchar(5))"""
 
 cursor.execute(sql)
