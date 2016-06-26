@@ -110,8 +110,7 @@ cursor.execute(sql)
 cursor.execute("drop table if exists Adm_Passwd")
 
 sql = """create table Adm_Passwd (
-         id int not null primary key auto_increment,
-         管理员 varchar(20) not null,
+         管理员 varchar(20) not null primary key,
          密码 varchar(20) not null )"""
 
 cursor.execute(sql)                               
@@ -125,22 +124,31 @@ cursor.execute(sql)
 cursor.execute("drop table if exists Tea_Passwd")
 
 sql = """create table Tea_Passwd (
-         id int not null primary key auto_increment,
-         职工号 varchar(10) not null,
+         职工号 varchar(10) not null primary key,
          密码 varchar(20) not null )"""
 
 cursor.execute(sql)                               
+sql = """insert into Tea_Passwd(职工号, 密码) 
+                     values (\'10001\',\'8963708\')"""
+cursor.execute(sql)
 
 #学生登陆表 Stu_Passwd
 cursor.execute("drop table if exists Stu_Passwd")
 
 sql = """create table Stu_Passwd (
-         id int not null primary key auto_increment,
-         学号 varchar(10) not null,
+         学号 varchar(10) not null primary key,
          密码 varchar(20) not null )"""
 
 cursor.execute(sql)                               
 
+sql = """insert into Stu_Passwd(学号,密码) 
+                     values (\'10001\',\'8963708\')"""
+
+cursor.execute(sql)
+
+db.commit()
+
+cursor.close()
 
 db.close()
 

@@ -1,6 +1,113 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
+import MySQLdb
+from Tkinter import *
+
 #登陆界面
 
+class Login():
+    def __init__(self):
+        self.db = MySQLdb.connect(host = 'localhost', user = 'zeng', passwd = '8963708', db = 'student', charset = 'utf8')
+        self.cursor = self.db.cursor()
+        self.root = Tk()
+        self.root.geometry('400x300')
+        lb1 = Label(self.root, text = '教学管理系统',font = ("黑体",15,'bold')).place(x = 135,y = 30)
+        self.showInfo = StringVar()  #
+        self.showInfo.set(' ')
+        labelShowInfo = Label(self.root, textvariable = self.showInfo,fg = 'red').place(x = 137, y = 60)
+        labelUser = Label(self.root, text = '用户名:').place(x = 100, y = 100)
+        labelPasswd = Label(self.root, text = '密码:').place(x = 100, y = 140)
+
+        #Entry
+        self.textUser = Entry(self.root, width = 20)
+        self.textUser.place(x = 150, y =100)
+        self.textPasswd = Entry(self.root, width = 20)
+        self.textPasswd.place(x = 150, y = 140)
+        self.textPasswd['show'] = '*'
+        
+        #Radiobutton
+        self.user = IntVar()
+        self.user.set(2)
+        Radiobutton(self.root, variable = self.user, text = '管理员', value =0).place(x = 90, y = 180)
+        Radiobutton(self.root, variable = self.user, text = '教师', value =1).place(x = 170, y = 180)
+        Radiobutton(self.root, variable = self.user, text = '学生', value =2).place(x = 240, y = 180)
+
+        #Button
+        self.SureButton = Button(self.root, text = '登录',width = 8, command = self.Sure).place(x = 230, y = 220)
+        self.CancelButton = Button(self.root, text = '取消', width = 8, command = self.Cancel).place(x = 80, y = 220)
+
+
+    def Sure(self):
+        if self.textUser.get() == '' or self.textPasswd.get() == '':
+            self.showInfo.set('用户名或密码不能为空')
+            return
+        if self.user.get() == 0:  #管理员
+            sql = "select * from Adm_Passwd \
+                        where 管理员 ='%s'"%(self.textUser.get())
+            count = self.cursor.execute(sql)
+            if count > 0:
+                result = self.cursor.fetchone()
+                if result[1] == self.textPasswd.get():
+                    print '管理员'
+                    #转管理员模块
+                    self.showInfo.set('')
+                    #self.cursor.close()
+                    #self.db.close()
+                    #self.root.destroy()
+                else: #防止SQL注入
+                    self.showInfo.set('用户名或密码错误')
+            else:
+                self.showInfo.set('用户名或密码错误')
+
+        elif self.user.get() == 1:    #教师
+            sql = "select * from Tea_Passwd \
+                        where 职工号 ='%s'"%(self.textUser.get())
+            count = self.cursor.execute(sql)
+            if count > 0:
+                result = self.cursor.fetchone()
+                if result[1] == self.textPasswd.get():
+                    print '老师'
+                    #转教师模块
+                    self.showInfo.set('')
+                    #self.cursor.close()
+                    #self.db.close()
+                    #self.root.destroy()
+                else: #防止SQL注入
+                    self.showInfo.set('用户名或密码错误')
+            else:
+                self.showInfo.set('用户名或密码错误')
+
+        elif self.user.get() == 2:     #学生
+            sql = "select * from Stu_Passwd \
+                        where 学号 ='%s'"%(self.textUser.get())
+            count = self.cursor.execute(sql)
+            if count > 0:
+                result = self.cursor.fetchone()
+                if result[1] == self.textPasswd.get():
+                    print '学生'
+                    #转学生模块
+                    self.showInfo.set('')
+                    #self.cursor.close()
+                    #self.db.close()
+                    #self.root.destroy()
+                else: #防止SQL注入
+                    self.showInfo.set('用户名或密码错误')
+            else:
+                self.showInfo.set('用户名或密码错误')
+
+
+    def Cancel(self):
+        self.textUser.delete(0, 20)
+        self.textPasswd.delete(0, 20)
+        self.user.set(2)
+        self.showInfo.set('')
+
+
+
+if __name__=='__main__':
+    win = Login()
+    win.root.title('教学管理系统')
+    #win.root.columnconfigure(0, minsize = 100)
+    win.root.mainloop()
 
