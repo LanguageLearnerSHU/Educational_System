@@ -3,6 +3,10 @@
 
 import MySQLdb
 from Tkinter import *
+import Administrators.admin
+import Teacher.teacher
+import Student.student
+
 
 #登陆界面
 
@@ -41,6 +45,7 @@ class Login():
     def Sure(self):
         if self.textUser.get() == '' or self.textPasswd.get() == '':
             self.showInfo.set('用户名或密码不能为空')
+            self.textPasswd.delete(0, 20)
             return
         if self.user.get() == 0:  #管理员
             sql = "select * from Adm_Passwd \
@@ -48,17 +53,20 @@ class Login():
             count = self.cursor.execute(sql)
             if count > 0:
                 result = self.cursor.fetchone()
-                if result[1] == self.textPasswd.get():
-                    print '管理员'
+                if result[0] == self.textUser.get() and result[1] == self.textPasswd.get():
                     #转管理员模块
                     self.showInfo.set('')
-                    #self.cursor.close()
-                    #self.db.close()
+                    Administrators.admin.Admin()
                     #self.root.destroy()
+                    self.cursor.close()
+                    self.db.close()
+                    self.root.destroy()
                 else: #防止SQL注入
                     self.showInfo.set('用户名或密码错误')
+                    self.textPasswd.delete(0, 20)
             else:
                 self.showInfo.set('用户名或密码错误')
+                self.textPasswd.delete(0, 20)
 
         elif self.user.get() == 1:    #教师
             sql = "select * from Tea_Passwd \
@@ -67,16 +75,19 @@ class Login():
             if count > 0:
                 result = self.cursor.fetchone()
                 if result[1] == self.textPasswd.get():
-                    print '老师'
                     #转教师模块
                     self.showInfo.set('')
-                    #self.cursor.close()
-                    #self.db.close()
+                    Teacher.teacher.Teacher()
                     #self.root.destroy()
+                    self.cursor.close()
+                    self.db.close()
+                    self.root.destroy()
                 else: #防止SQL注入
                     self.showInfo.set('用户名或密码错误')
+                    self.textPasswd.delete(0, 20)
             else:
                 self.showInfo.set('用户名或密码错误')
+                self.textPasswd.delete(0, 20)
 
         elif self.user.get() == 2:     #学生
             sql = "select * from Stu_Passwd \
@@ -85,16 +96,20 @@ class Login():
             if count > 0:
                 result = self.cursor.fetchone()
                 if result[1] == self.textPasswd.get():
-                    print '学生'
                     #转学生模块
                     self.showInfo.set('')
-                    #self.cursor.close()
-                    #self.db.close()
+                    Student.student.Student.User = self.textUser.get()
+                    Student.student.Student()
                     #self.root.destroy()
+                    self.cursor.close()
+                    self.db.close()
+                    self.root.destroy()
                 else: #防止SQL注入
                     self.showInfo.set('用户名或密码错误')
+                    self.textPasswd.delete(0, 20)
             else:
                 self.showInfo.set('用户名或密码错误')
+                self.textPasswd.delete(0, 20)
 
 
     def Cancel(self):
