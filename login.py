@@ -56,6 +56,7 @@ class Login():
                 if result[0] == self.textUser.get() and result[1] == self.textPasswd.get():
                     #转管理员模块
                     self.showInfo.set('')
+                    Administrators.admin.Admin.User = self.textUser.get()
                     Administrators.admin.Admin()
                     #self.root.destroy()
                     self.cursor.close()
@@ -77,6 +78,7 @@ class Login():
                 if result[1] == self.textPasswd.get():
                     #转教师模块
                     self.showInfo.set('')
+                    Teacher.teacher.Teacher.User = self.textUser.get()
                     Teacher.teacher.Teacher()
                     #self.root.destroy()
                     self.cursor.close()

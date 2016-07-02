@@ -312,11 +312,11 @@ class Admin():
         
         #查询学生界面
         elif Admin.flag == 'select_Student':
-            Label(self.admin_root, text = "查询所教学生:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+            Label(self.admin_root, text = "查询学生:",font = ('黑体','12','bold')).place(x = 10, y = 10)
         
         #查询课程界面
         elif Admin.flag == 'select_Course':
-            Label(self.admin_root, text = "查询所教课程:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+            Label(self.admin_root, text = "查询课程:",font = ('黑体','12','bold')).place(x = 10, y = 10)
 
 
     ################ 响应函数模块 ###################
