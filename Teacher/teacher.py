@@ -140,9 +140,51 @@ class Teacher():
         elif Teacher.flag == 'select_Student':
             Label(self.teacher_root, text = "查询学生成绩:",font = ('黑体','12','bold')).place(x = 10, y = 10)
 
+            self.SelectStudentVar = StringVar(self.teacher_root)
+            self.SelectStudentVar.set('学号')
+            self.SelectOM = OptionMenu(self.teacher_root, self.SelectStudentVar, '学号','姓名')
+            self.SelectOM.place(x = 780, y = 200)
+            self.SelectStudentText = Entry(self.teacher_root, width = 15)
+            self.SelectStudentText.place(x = 860, y = 204	)
+            def CleanSelectStudentText(event):
+                self.SelectStudentText.delete(0, 15)
+            self.SelectOM.bind('<Button-1>',CleanSelectStudentText)
+            Button(self.teacher_root, text = '确定',width = 7,command = self.Select_Student_Sure).place(x = 900, y = 250)
+            Button(self.teacher_root, text = '全部',width = 7,command = self.Select_ALLStudent_Sure).place(x = 780, y = 250)
+            
+            Label(self.teacher_root, text = '%-*s%-*s%-*s%-*s'%(25,'学  号',25,'姓  名',40,'  科  目',10,'成  绩')).place(x = 5, y = 35)
+            self.ListboxVar = StringVar()
+	    self.SelectScorse = Listbox(self.teacher_root,listvariable=self.ListboxVar, height = 29, width = 105)
+            self.sl = Scrollbar(self.teacher_root)
+            self.sl.place(x = 744, y =60, height = 525, width = 20)
+            self.SelectScorse['yscrollcommand'] = self.sl.set
+	    self.SelectScorse.place(x = 5, y = 60)
+            self.sl['command'] = self.SelectScorse.yview
+            sql = "select OptionCourse.学号,Student.姓名,名称, 成绩 from Student,Teacher,Course, OptionCourse where Teacher.职工号='%s' and Teacher.任课=Course.课程号 and Course.课程号=OptionCourse.课程号 and OptionCourse.学号=Student.学号"%Teacher.User
+            num = self.cursor.execute(sql)
+            if num > 0:
+                result = self.cursor.fetchmany(num)
+                for i in result:
+                    fm = '%-*s%-*s%-*s%-*s'%(20,i[0],18,i[1],32,i[2],10,i[3])
+                    self.SelectScorse.insert(END, fm)
+
         #查询所教课程界面
         elif Teacher.flag == 'select_Course':
             Label(self.teacher_root, text = "查询所教课程:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+            Label(self.teacher_root, text = '%-*s%-*s%-*s%-*s'%(70,'  科  目',33,'地点',57,'上课周',60,'时 间')).place(x = 5, y = 35)
+	    self.SelectCourse = Listbox(self.teacher_root, height = 29, width = 135)
+            self.sl1 = Scrollbar(self.teacher_root)
+            self.sl1.place(x = 954, y =60, height = 525, width = 20)
+            self.SelectCourse['yscrollcommand'] = self.sl1.set
+	    self.SelectCourse.place(x = 5, y = 60)
+            self.sl1['command'] = self.SelectCourse.yview
+            sql = "select 名称,地点,起始周,结束周,上课时间,下课时间 from Course, OptionCourse,Teacher where 职工号='%s' and Course.课程号=OptionCourse.课程号 and 任课老师=职工号"%Teacher.User
+            num = self.cursor.execute(sql)
+            if num > 0:
+                result = self.cursor.fetchmany(num)
+                for i in result:
+                    fm = '%-*s%-*s%-*s%-*s'%(60,i[0],30,i[1],50,'%s - %s'%(i[2],i[3]),50,'%s - %s'%(i[4],i[5]))
+                    self.SelectCourse.insert(END, fm)
 
 
     ################ 响应函数模块 ###################
@@ -312,6 +354,40 @@ class Teacher():
         self.cursor.close()
         self.db.close()
         self.teacher_root.destroy()
+
+    def Select_Student_Sure(self):
+        self.ListboxVar.set('')
+        if self.SelectStudentVar.get() == '学号':
+            sql = "select OptionCourse.学号,Student.姓名,名称, 成绩 from Student,Teacher,Course, OptionCourse where OptionCourse.学号='%s' and Teacher.任课=Course.课程号 and Course.课程号=OptionCourse.课程号 and OptionCourse.学号=Student.学号"%self.SelectStudentText.get()
+            num = self.cursor.execute(sql)
+            if num > 0:
+                result = self.cursor.fetchmany(num)
+                for i in result:
+                    fm = '%-*s%-*s%-*s%-*s'%(20,i[0],18,i[1],32,i[2],10,i[3])
+                    self.SelectScorse.insert(END, fm)
+
+        elif self.SelectStudentVar.get() == '姓名':
+            sql = "select OptionCourse.学号,Student.姓名,名称, 成绩 from Student,Teacher,Course, OptionCourse where Student.姓名='%s' and Teacher.任课=Course.课程号 and Course.课程号=OptionCourse.课程号 and OptionCourse.学号=Student.学号"%self.SelectStudentText.get()
+            num = self.cursor.execute(sql)
+            if num > 0:
+                result = self.cursor.fetchmany(num)
+                for i in result:
+                    fm = '%-*s%-*s%-*s%-*s'%(20,i[0],18,i[1],32,i[2],10,i[3])
+                    self.SelectScorse.insert(END, fm)
+
+
+
+    def Select_ALLStudent_Sure(self):
+        self.ListboxVar.set('')
+        sql = "select OptionCourse.学号,Student.姓名,名称, 成绩 from Student,Teacher,Course, OptionCourse where Teacher.职工号='%s' and Teacher.任课=Course.课程号 and Course.课程号=OptionCourse.课程号 and OptionCourse.学号=Student.学号"%Teacher.User
+        num = self.cursor.execute(sql)
+        if num > 0:
+            result = self.cursor.fetchmany(num)
+            for i in result:
+                fm = '%-*s%-*s%-*s%-*s'%(20,i[0],18,i[1],32,i[2],10,i[3])
+                self.SelectScorse.insert(END, fm)
+
+
 
 
     #注销
