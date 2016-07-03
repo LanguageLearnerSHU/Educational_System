@@ -23,13 +23,13 @@ class Admin():
         #添加
         self.add = Menu(self.MainMenu, tearoff = 0)
         self.add.add_command(label = '      管理员  ', command = self.add_Admin)
-        self.add.add_command(label = '      教师  ', command = self.add_Teacher)
-        self.add.add_command(label = '      学生  ', command = self.add_Student)
-        self.add.add_command(label = '      课程  ', command = self.add_Course)
-        self.add.add_command(label = '      学院  ', command = self.add_College)
-        self.add.add_command(label = '      专业  ', command = self.add_Major)
+        self.add.add_command(label = '      教 师  ', command = self.add_Teacher)
+        self.add.add_command(label = '      学 生  ', command = self.add_Student)
+        self.add.add_command(label = '      课 程  ', command = self.add_Course)
+        self.add.add_command(label = '      学 院  ', command = self.add_College)
+        self.add.add_command(label = '      专 业  ', command = self.add_Major)
         self.add.add_command(label = '      教研室  ', command = self.add_TeacherOffice)
-        self.add.add_command(label = '      班级  ', command = self.add_Class)
+        self.add.add_command(label = '      班 级  ', command = self.add_Class)
 
         #删除
         self.delete = Menu(self.MainMenu, tearoff = 0)
@@ -74,24 +74,22 @@ class Admin():
         ### 添加模块界面 ###
         #添加管理员界面
         elif Admin.flag == 'add_Admin':
-            #self.add_lb = Label(self.admin_root, text = '添加管理员').place(x = 100, y = 100)
+            Label(self.admin_root, text = "添加管理员:",font = ('黑体','12','bold')).place(x = 10, y = 10)
             if Admin.User == 'root':
-                Label(self.admin_root, text = "添加管理员:",font = ('黑体','12','bold')).place(x = 10, y = 10)
-                Label(self.admin_root, text = "管理员:").place(x = 430, y = 100)
-                Label(self.admin_root, text = "密码:").place(x = 430, y = 170)
-                Label(self.admin_root, text = "确认:").place(x = 430, y = 240)
+                Label(self.admin_root, text = "管理员:").place(x = 400, y = 100)
+                Label(self.admin_root, text = "密码:").place(x = 400, y = 170)
+                Label(self.admin_root, text = "确认:").place(x = 400, y = 240)
                 self.NewAdmin = Entry(self.admin_root, width = 20)
-                self.NewAdmin.place(x = 500, y = 100)
+                self.NewAdmin.place(x = 450, y = 100)
                 self.NewAdminPasswd1 = Entry(self.admin_root, width = 20)
-                self.NewAdminPasswd1.place(x = 500, y =170)
+                self.NewAdminPasswd1.place(x = 450, y =170)
                 self.NewAdminPasswd1['show'] = '*'
                 self.NewAdminPasswd2 = Entry(self.admin_root, width = 20)
-                self.NewAdminPasswd2.place(x = 500, y = 240)
+                self.NewAdminPasswd2.place(x = 450, y = 240)
                 self.NewAdminPasswd2['show'] = '*'
                 Button(self.admin_root, text = "确定", width = 8, command = self.add_Admin_Sure).place(x = 700, y = 350)
             else:
                 tkMessageBox.showinfo("Warnning", "你无权限添加管理员！")
-                return 
 
         #添加教师界面
         elif Admin.flag == 'add_Teacher':
@@ -120,15 +118,15 @@ class Admin():
         #添加学生界面
         elif Admin.flag == 'add_Student':
             Label(self.admin_root, text = "添加学生:",font = ('黑体','12','bold')).place(x = 10, y = 10)
-            Label(self.admin_root, text = "学号:").place(x = 430, y = 100)
-            Label(self.admin_root, text = "专业代码:").place(x = 430, y = 170)
-            Label(self.admin_root, text = "班级代码:").place(x = 430, y = 240)
+            Label(self.admin_root, text = "学号:").place(x = 400, y = 100)
+            Label(self.admin_root, text = "专业代码:").place(x = 400, y = 170)
+            Label(self.admin_root, text = "班级代码:").place(x = 400, y = 240)
             self.NewStudentID = Entry(self.admin_root, width = 20)
-            self.NewStudentID.place(x = 500, y = 100)
+            self.NewStudentID.place(x = 450, y = 100)
             self.NewStudentMAJOR = Entry(self.admin_root, width = 20)
-            self.NewStudentMAJOR.place(x = 500, y = 170)
+            self.NewStudentMAJOR.place(x = 450, y = 170)
             self.NewStudentCLASS = Entry(self.admin_root, width = 20)
-            self.NewStudentCLASS.place(x = 500, y = 240)
+            self.NewStudentCLASS.place(x = 450, y = 240)
             Button(self.admin_root, text = "确定", width = 8, command = self.add_Student_Sure).place(x = 700, y = 350)
 
         #添加课程界面
@@ -192,18 +190,18 @@ class Admin():
         #添加教研室界面
         elif Admin.flag == 'add_TeacherOffice':
             Label(self.admin_root, text = "添加教研室:",font = ('黑体','12','bold')).place(x = 10, y = 10)
-            Label(self.admin_root, text = "教研室代码:").place(x = 430, y = 100)
-            Label(self.admin_root, text = "名 称:").place(x = 430, y = 170)
-            Label(self.admin_root, text = "地 点:").place(x = 430, y = 240)
-            Label(self.admin_root, text = "所在学院:").place(x = 430, y = 310)
+            Label(self.admin_root, text = "教研室代码:").place(x = 400, y = 100)
+            Label(self.admin_root, text = "名 称:").place(x = 400, y = 170)
+            Label(self.admin_root, text = "地 点:").place(x = 400, y = 240)
+            Label(self.admin_root, text = "所在学院:").place(x = 400, y = 310)
             self.NewTeacherOfficeID = Entry(self.admin_root, width = 20)
-            self.NewTeacherOfficeID.place(x = 500, y = 100)
+            self.NewTeacherOfficeID.place(x = 450, y = 100)
             self.NewTeacherOfficeNAME = Entry(self.admin_root, width = 20)
-            self.NewTeacherOfficeNAME.place(x = 500, y = 170)
+            self.NewTeacherOfficeNAME.place(x = 450, y = 170)
             self.NewTeacherOfficeLOCAL = Entry(self.admin_root, width = 20)
-            self.NewTeacherOfficeLOCAL.place(x = 500, y = 240)
+            self.NewTeacherOfficeLOCAL.place(x = 450, y = 240)
             self.NewTeacherOfficeCOLLEGE = Entry(self.admin_root, width = 20)
-            self.NewTeacherOfficeCOLLEGE.place(x = 500, y = 310)
+            self.NewTeacherOfficeCOLLEGE.place(x = 450, y = 310)
             Button(self.admin_root, text = "确定", width = 8, command = self.add_TeacherOffice_Sure).place(x = 700, y = 400)
 
         #添加班级界面 
@@ -233,6 +231,13 @@ class Admin():
         #删除管理员界面
         elif Admin.flag == 'delete_Admin':
             Label(self.admin_root, text = "删除管理员:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+            if Admin.User == 'root':
+                Label(self.admin_root, text = "管理员:").place(x = 400, y = 200)
+                self.DeleteAdmin = Entry(self.admin_root, width = 20)
+                self.DeleteAdmin.place(x = 450, y = 200)
+                Button(self.admin_root, text = "确定", width = 8, command = self.delete_Admin_Sure).place(x = 700, y = 350)
+            else:
+                tkMessageBox.showinfo("Warnning", "你无权限删除管理员！")
 
         #删除教师界面
         elif Admin.flag == 'delete_Teacher':
@@ -312,11 +317,11 @@ class Admin():
         
         #查询学生界面
         elif Admin.flag == 'select_Student':
-            Label(self.admin_root, text = "查询学生:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+            Label(self.admin_root, text = "查询所教学生:",font = ('黑体','12','bold')).place(x = 10, y = 10)
         
         #查询课程界面
         elif Admin.flag == 'select_Course':
-            Label(self.admin_root, text = "查询课程:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+            Label(self.admin_root, text = "查询所教课程:",font = ('黑体','12','bold')).place(x = 10, y = 10)
 
 
     ################ 响应函数模块 ###################
@@ -672,6 +677,24 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         self.cursor.close()
         self.db.close()
         self.admin_root.destroy()
+
+    def delete_Admin_Sure(self):
+        sql = "select * from Adm_Passwd where 管理员 = '%s'"%self.DeleteAdmin.get()
+        count = self.cursor.execute(sql)
+        if count == 0:
+            self.DeleteAdmin.delete(0, 20)
+            tkMessageBox.showinfo("error", "不存在该管理员！")
+        else:
+            sql = "delete from Adm_Passwd where 管理员='%s'"%self.DeleteAdmin.get()
+            count = self.cursor.execute(sql)
+            self.db.commit()
+            if count > 0:
+                self.DeleteAdmin.delete(0, 20)
+                tkMessageBox.showinfo("Message", "删除成功！")
+            else:
+                self.DeleteAdmin.delete(0, 20)
+                tkMessageBox.showinfo("Message", "删除失败！")
+
 
     def delete_Teacher(self):
         if Admin.flag == 'delete_Teacher':

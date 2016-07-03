@@ -25,8 +25,8 @@ class Teacher():
         self.add.add_command(label = '      学生成绩  ', command = self.add_Student)
 
         #删除
-        self.delete = Menu(self.MainMenu, tearoff = 0)
-        self.delete.add_command(label = '      学生成绩', command = self.delete_Student)
+        #self.delete = Menu(self.MainMenu, tearoff = 0)
+        #self.delete.add_command(label = '      学生成绩', command = self.delete_Student)
         
         #修改
         self.modify = Menu(self.MainMenu, tearoff = 0)
@@ -45,7 +45,7 @@ class Teacher():
         
         #为MainMenu添加下拉菜单
         self.MainMenu.add_cascade(label = '           插 入           ', menu = self.add)
-        self.MainMenu.add_cascade(label = '           删 除           ', menu = self.delete)
+        #self.MainMenu.add_cascade(label = '           删 除           ', menu = self.delete)
         self.MainMenu.add_cascade(label = '           修 改           ', menu = self.modify)
         self.MainMenu.add_cascade(label = '           查 询           ', menu = self.select)
         #注销
@@ -70,19 +70,32 @@ class Teacher():
         #插入学生成绩界面
         elif Teacher.flag == 'add_Student':
             Label(self.teacher_root, text = "插入学生成绩:",font = ('黑体','12','bold')).place(x = 10, y = 10)
-            self.add_lb = Label(self.teacher_root, text = '添加学生').place(x = 100, y = 100)
+            Label(self.teacher_root, text = "学号:").place(x = 400, y = 150)
+            Label(self.teacher_root, text = "成绩:").place(x = 400, y = 220)
+            self.IndexStudentID = Entry(self.teacher_root, width = 20)
+            self.IndexStudentID.place(x = 450, y = 150)
+            self.IndexStudentSCORE = Entry(self.teacher_root, width = 20)
+            self.IndexStudentSCORE.place(x = 450, y = 220)
+            Button(self.teacher_root, text = "确定", width = 8, command = self.add_Student_Sure).place(x = 700, y = 300)
 
 
         ### 删除模块界面 ###
         #删除学生成绩界面
-        elif Teacher.flag == 'delete_Student':
-            Label(self.teacher_root, text = "删除学生成绩:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+        #elif Teacher.flag == 'delete_Student':
+            #Label(self.teacher_root, text = "删除学生成绩:",font = ('黑体','12','bold')).place(x = 10, y = 10)
 
 
         ### 修改模块界面 ###
         #修改学生成绩界面
         elif Teacher.flag == 'modify_Student':
             Label(self.teacher_root, text = "修改学生成绩:",font = ('黑体','12','bold')).place(x = 10, y = 10)
+            Label(self.teacher_root, text = "学号:").place(x = 400, y = 150)
+            Label(self.teacher_root, text = "成绩:").place(x = 400, y = 220)
+            self.ModifyStudentID = Entry(self.teacher_root, width = 20)
+            self.ModifyStudentID.place(x = 450, y = 150)
+            self.ModifyStudentSCORE = Entry(self.teacher_root, width = 20)
+            self.ModifyStudentSCORE.place(x = 450, y = 220)
+            Button(self.teacher_root, text = "确定", width = 8, command = self.modify_Student_Sure).place(x = 700, y = 300)
         
         #修改个人信息界面
         elif Teacher.flag == 'modify_Teacher':
@@ -134,7 +147,7 @@ class Teacher():
 
     ################ 响应函数模块 ###################
 
-    #添加模块响应函数
+    #插入模块响应函数
     
     def add_Student(self):
         if Teacher.flag == 'add_Student':
@@ -145,17 +158,43 @@ class Teacher():
         self.db.close()
         self.teacher_root.destroy()
 
+    def add_Student_Sure(self):
+        sql = "select 任课 from Teacher where 职工号='%s'"%Teacher.User
+        self.cursor.execute(sql)
+        result = self.cursor.fetchone()
+        #name = str(result[1].encode('utf-8'))
+        course = result[0]
+        #print course
+        sql = "select * from OptionCourse where 学号='%s' and 课程号='%s'"%(self.IndexStudentID.get(), course)
+        count = self.cursor.execute(sql)
+        self.db.commit()
+        if count > 0:
+            sql = "update OptionCourse set 成绩 = '%s' where 学号='%s' and 课程号='%s'"%(self.IndexStudentSCORE.get(),self.IndexStudentID.get(), course)
+            count1 = self.cursor.execute(sql)
+            self.db.commit()
+            if count1 >0:
+                self.IndexStudentID.delete(0, 20)
+                self.IndexStudentSCORE.delete(0, 20)
+                tkMessageBox.showinfo("Message", "插入成功！")
+            else:
+                self.IndexStudentID.delete(0, 20)
+                self.IndexStudentSCORE.delete(0, 20)
+                tkMessageBox.showinfo("Message", "插入失败！")
+        else:
+            self.IndexStudentID.delete(0, 20)
+            self.IndexStudentSCORE.delete(0, 20)
+            tkMessageBox.showinfo("error", "该学生无选修该课程！")
 
 
     #删除模块响应函数
-    def delete_Student(self):
-        if Teacher.flag == 'delete_Student':
-            return
-        Teacher.flag = 'delete_Student'
-        Teacher()
-        self.cursor.close()
-        self.db.close()
-        self.teacher_root.destroy()
+    #def delete_Student(self):
+        #if Teacher.flag == 'delete_Student':
+            #return
+        #Teacher.flag = 'delete_Student'
+        #Teacher()
+        #self.cursor.close()
+        #self.db.close()
+        #self.teacher_root.destroy()
 
 
     #修改模块响应函数
@@ -226,6 +265,34 @@ class Teacher():
         self.cursor.close()
         self.db.close()
         self.teacher_root.destroy()
+
+    def modify_Student_Sure(self):
+        sql = "select 任课 from Teacher where 职工号='%s'"%Teacher.User
+        self.cursor.execute(sql)
+        result = self.cursor.fetchone()
+        #name = str(result[1].encode('utf-8'))
+        course = result[0]
+        #print course
+        sql = "select * from OptionCourse where 学号='%s' and 课程号='%s'"%(self.ModifyStudentID.get(), course)
+        count = self.cursor.execute(sql)
+        self.db.commit()
+        if count > 0:
+            sql = "update OptionCourse set 成绩 = '%s' where 学号='%s' and 课程号='%s'"%(self.ModifyStudentSCORE.get(),self.ModifyStudentID.get(), course)
+            count1 = self.cursor.execute(sql)
+            self.db.commit()
+            if count1 >0:
+                self.ModifyStudentID.delete(0, 20)
+                self.ModifyStudentSCORE.delete(0, 20)
+                tkMessageBox.showinfo("Message", "修改成功！")
+            else:
+                self.ModifyStudentID.delete(0, 20)
+                self.ModifyStudentSCORE.delete(0, 20)
+                tkMessageBox.showinfo("Message", "修改失败！")
+        else:
+            self.ModifyStudentID.delete(0, 20)
+            self.ModifyStudentSCORE.delete(0, 20)
+            tkMessageBox.showinfo("error", "该学生无选修该课程！")
+
 
     #查询模块响应函数
     def select_Student(self):

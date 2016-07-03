@@ -79,7 +79,6 @@ class Login():
                 if result[1] == self.textPasswd.get():
                     #转教师模块
                     self.showInfo.set('')
-                    Teacher.teacher.Teacher.flag = 'index'
                     Teacher.teacher.Teacher.User = self.textUser.get()
                     Teacher.teacher.Teacher()
                     #self.root.destroy()
@@ -102,7 +101,6 @@ class Login():
                 if result[1] == self.textPasswd.get():
                     #转学生模块
                     self.showInfo.set('')
-                    Student.student.Student.flag = 'index'
                     Student.student.Student.User = self.textUser.get()
                     Student.student.Student()
                     #self.root.destroy()
