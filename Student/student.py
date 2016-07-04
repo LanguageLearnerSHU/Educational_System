@@ -132,19 +132,19 @@ class Student():
         #选课
         elif Student.flag == 'option_Course':
             Label(self.student_root, text = "选课:",font = ('黑体','12','bold')).place(x = 10, y = 10)
-            Label(self.student_root, text = '%-*s%-*s%-*s%-*s%-*s'%(70,'  科  目',30,'老 师',30,'地点',60,'上课周',60,'时 间')).place(x = 5, y = 35)
+            Label(self.student_root, text = '%-*s%-*s%-*s%-*s%-*s%-*s'%(20,'课程号',40,'  科  目',30,'老 师',30,'地点',60,'上课周',60,'时 间')).place(x = 5, y = 35)
 	    self.OptionCourseLB = Listbox(self.student_root,selectmode = MULTIPLE, height = 29, width = 105)
             self.sl2 = Scrollbar(self.student_root)
             self.sl2.place(x = 744, y =60, height = 525, width = 20)
             self.OptionCourseLB['yscrollcommand'] = self.sl2.set
 	    self.OptionCourseLB.place(x = 5, y = 60)
             self.sl2['command'] = self.OptionCourseLB.yview
-            sql = "select 名称,姓名,地点,起始周,结束周,上课时间,下课时间 from Course,Teacher where 任课老师=职工号"
+            sql = "select 课程号,名称,姓名,地点,起始周,结束周,上课时间,下课时间 from Course,Teacher where 任课老师=职工号 and Course.课程号 NOT IN (select OptionCourse.课程号 from OptionCourse where 学号='%s')"%Student.User
             num = self.cursor.execute(sql)
             if num > 0:
                 result = self.cursor.fetchmany(num)
                 for i in result:
-                    fm = '%-*s%-*s%-*s%-*s%-*s'%(60,i[0],23,i[1],27,i[2],50,'%s - %s'%(i[3],i[4]),50,'%s - %s'%(i[5],i[6]))
+                    fm = '%-*s%-*s%-*s%-*s%-*s%-*s'%(15,i[0],30,i[1],23,i[2],27,i[3],50,'%s - %s'%(i[4],i[5]),50,'%s - %s'%(i[6],i[7]))
                     self.OptionCourseLB.insert(END, fm)
 
             Button(self.student_root, text = '确定',width = 8,command = self.Option_Student_Sure).place(x = 780, y = 400)
@@ -162,10 +162,8 @@ class Student():
             passwd = str(result[1])
             if passwd != self.OldPasswd.get():
                 tkMessageBox.showinfo('Message','原密码错误')
-                return 
             elif self.NewPasswd1.get() != self.NewPasswd2.get():
                 tkMessageBox.showinfo('Message', '两次密码不一致')
-                return
             else:
                 sql = "update Stu_Passwd set  密码='%s' where 学号 ='%s'"%(self.NewPasswd1.get(),Student.User)
                 self.cursor.execute(sql)
@@ -176,8 +174,6 @@ class Student():
                 tkMessageBox.showinfo('Message', '修改成功')
         else:
             tkMessageBox.showinfo('Message','passwd error')
-            return 
-
 
 
     def modify_Passwd(self):
@@ -207,13 +203,11 @@ class Student():
             self.StudentSEX.delete(0, 20)
             self.StudentLOCAL.delete(0, 20)
             tkMessageBox.showinfo("Message", "修改成功！")
-            return
         else:
             self.StudentNAME.delete(0, 20)
             self.StudentSEX.delete(0, 20)
             self.StudentLOCAL.delete(0, 20)
             tkMessageBox.showinfo("error", "修改失败！")
-            return
 
 
     #查询模块响应函数
@@ -246,10 +240,24 @@ class Student():
         self.student_root.destroy()
 
     def Option_Student_Sure(self):
-        pass
+        for item in self.OptionCourseLB.curselection():
+            course = self.OptionCourseLB.get(item)[0:5]
+            sql = "select * from OptionCourse where 课程号 = '%s' and 学号='%s'"%(course,Student.User)
+            count = self.cursor.execute(sql)
+            if count > 0:
+                tkMessageBox.showinfo("Message", "已选修该课程！")
+            else:
+                sql = "insert into OptionCourse(学号, 课程号) values('%s','%s')"%(Student.User,course)
+                count = self.cursor.execute(sql)
+                self.db.commit()
+                if count > 0:
+                    tkMessageBox.showinfo("Message", "选课成功！")
+                    self.OptionCourseLB.delete(item,item)
+                else:
+                    tkMessageBox.showinfo("Message", "选课失败！")
 
     def Cancel_Student_Sure(self):
-        pass
+        self.OptionCourseLB.selection_clear(0,END)
 
 
     #注销
