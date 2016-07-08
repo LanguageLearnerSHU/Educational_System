@@ -119,15 +119,18 @@ class Admin():
         elif Admin.flag == 'add_Student':
             Label(self.admin_root, text = "添加学生:",font = ('黑体','12','bold')).place(x = 10, y = 10)
             Label(self.admin_root, text = "学号:").place(x = 400, y = 100)
-            Label(self.admin_root, text = "专业代码:").place(x = 400, y = 170)
-            Label(self.admin_root, text = "班级代码:").place(x = 400, y = 240)
+            Label(self.admin_root, text = "姓名:").place(x = 400, y = 170)
+            Label(self.admin_root, text = "专业代码:").place(x = 400, y = 240)
+            Label(self.admin_root, text = "班级代码:").place(x = 400, y = 310)
             self.NewStudentID = Entry(self.admin_root, width = 20)
             self.NewStudentID.place(x = 450, y = 100)
+            self.NewStudentNAME = Entry(self.admin_root, width = 20)
+            self.NewStudentNAME.place(x = 450, y = 170)
             self.NewStudentMAJOR = Entry(self.admin_root, width = 20)
-            self.NewStudentMAJOR.place(x = 450, y = 170)
+            self.NewStudentMAJOR.place(x = 450, y = 240)
             self.NewStudentCLASS = Entry(self.admin_root, width = 20)
-            self.NewStudentCLASS.place(x = 450, y = 240)
-            Button(self.admin_root, text = "确定", width = 8, command = self.add_Student_Sure).place(x = 700, y = 350)
+            self.NewStudentCLASS.place(x = 450, y = 310)
+            Button(self.admin_root, text = "确定", width = 8, command = self.add_Student_Sure).place(x = 700, y = 400)
 
         #添加课程界面
         elif Admin.flag == 'add_Course':
@@ -358,7 +361,7 @@ class Admin():
             self.SelectCourse['yscrollcommand'] = self.sl1.set
 	    self.SelectCourse.place(x = 5, y = 60)
             self.sl1['command'] = self.SelectCourse.yview
-            sql = "select 名称,姓名,地点,起始周,结束周,上课时间,下课时间 from Course, OptionCourse,Teacher where Course.课程号=OptionCourse.课程号 and 任课老师=职工号"
+            sql = "select 名称,姓名,地点,起始周,结束周,上课时间,下课时间 from Course,Teacher where 任课老师=职工号"
             num = self.cursor.execute(sql)
             if num > 0:
                 result = self.cursor.fetchmany(num)
@@ -383,30 +386,30 @@ class Admin():
         sql = "select * from Adm_Passwd where 管理员 = '%s'"%self.NewAdmin.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "存在该管理员，添加失败！")
             self.NewAdmin.delete(0, 20)
             self.NewAdminPasswd1.delete(0, 20)
             self.NewAdminPasswd2.delete(0, 20)
-            tkMessageBox.showinfo("error", "存在该管理员，添加失败！")
 
         elif self.NewAdminPasswd1.get() != self.NewAdminPasswd2.get():
+            tkMessageBox.showinfo("error", "两次密码不一致，添加失败！")
             self.NewAdmin.delete(0, 20)
             self.NewAdminPasswd1.delete(0, 20)
             self.NewAdminPasswd2.delete(0, 20)
-            tkMessageBox.showinfo("error", "两次密码不一致，添加失败！")
         else:
             sql = "insert into Adm_Passwd values(\'%s\', \'%s\')"%(self.NewAdmin.get(), self.NewAdminPasswd1.get())
             count = self.cursor.execute(sql)
             self.db.commit()
             if count > 0:
-                self.NewAdmin.delete(0, 20)
-                self.NewAdminPasswd1.delete(0, 20)
-                self.NewAdminPasswd2.delete(0, 20)
                 tkMessageBox.showinfo("Message", "添加成功！")
-            else:
                 self.NewAdmin.delete(0, 20)
                 self.NewAdminPasswd1.delete(0, 20)
                 self.NewAdminPasswd2.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加失败！")
+                self.NewAdmin.delete(0, 20)
+                self.NewAdminPasswd1.delete(0, 20)
+                self.NewAdminPasswd2.delete(0, 20)
 
     def add_Course(self):
         if Admin.flag == 'add_Course':
@@ -421,6 +424,7 @@ class Admin():
         sql = "select * from Course where 课程号 = '%s'"%self.NewCourseID.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "已存在该课程，添加失败！")
             self.NewCourseID.delete(0, 20)
             self.NewCourseNAME.delete(0, 20)
             self.NewCourseTEACHER.delete(0, 20)
@@ -429,8 +433,6 @@ class Admin():
             self.NewCourseENDWEEK.delete(0, 20)
             self.NewCourseBEGINTIME.delete(0, 20)
             self.NewCourseENDTIME.delete(0, 20)
-
-            tkMessageBox.showinfo("error", "已存在该课程，添加失败！")
         else:
             sql = "insert into Course values(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\')"%\
 (self.NewCourseID.get(), self.NewCourseNAME.get(), self.NewCourseTEACHER.get(), self.NewCourseBEGINWEEK.get(),\
@@ -438,17 +440,7 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
             count = self.cursor.execute(sql)
             self.db.commit()
             if count == 0:
-                self.NewCourseID.delete(0, 20)
-                self.NewCourseNAME.delete(0, 20)
-                self.NewCourseTEACHER.delete(0, 20)
-                self.NewCourseLOCAL.delete(0, 20)
-                self.NewCourseBEGINWEEK.delete(0, 20)
-                self.NewCourseENDWEEK.delete(0, 20)
-                self.NewCourseBEGINTIME.delete(0, 20)
-                self.NewCourseENDTIME.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.NewCourseID.delete(0, 20)
                 self.NewCourseNAME.delete(0, 20)
                 self.NewCourseTEACHER.delete(0, 20)
@@ -457,7 +449,16 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
                 self.NewCourseENDWEEK.delete(0, 20)
                 self.NewCourseBEGINTIME.delete(0, 20)
                 self.NewCourseENDTIME.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.NewCourseID.delete(0, 20)
+                self.NewCourseNAME.delete(0, 20)
+                self.NewCourseTEACHER.delete(0, 20)
+                self.NewCourseLOCAL.delete(0, 20)
+                self.NewCourseBEGINWEEK.delete(0, 20)
+                self.NewCourseENDWEEK.delete(0, 20)
+                self.NewCourseBEGINTIME.delete(0, 20)
+                self.NewCourseENDTIME.delete(0, 20)
         
 
 
@@ -474,13 +475,13 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from Tea_Passwd where 职工号 = '%s'"%self.NewTeacherID.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "已存在该教师，添加失败！")
             self.NewTeacherID.delete(0, 20)
             self.NewTeacherNAME.delete(0, 20)
             self.NewTeacherSEX.delete(0, 20)
             self.NewTeacherOFFICE.delete(0, 20)
             self.NewTeacherPHONE.delete(0, 20)
             self.NewTeacherCOURSE.delete(0, 20)
-            tkMessageBox.showinfo("error", "已存在该教师，添加失败！")
         else:
             sql1 = "insert into Tea_Passwd values(\'%s\', \'%s\')"%(self.NewTeacherID.get(), self.NewTeacherID.get())
             count1 = self.cursor.execute(sql1)
@@ -496,22 +497,21 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
                 count1 = self.cursor.execute(sql)
                 self.db.commit()
 
-                self.NewTeacherID.delete(0, 20)
-                self.NewTeacherNAME.delete(0, 20)
-                self.NewTeacherSEX.delete(0, 20)
-                self.NewTeacherOFFICE.delete(0, 20)
-                self.NewTeacherPHONE.delete(0, 20)
-                self.NewTeacherCOURSE.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.NewTeacherID.delete(0, 20)
                 self.NewTeacherNAME.delete(0, 20)
                 self.NewTeacherSEX.delete(0, 20)
                 self.NewTeacherOFFICE.delete(0, 20)
                 self.NewTeacherPHONE.delete(0, 20)
                 self.NewTeacherCOURSE.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.NewTeacherID.delete(0, 20)
+                self.NewTeacherNAME.delete(0, 20)
+                self.NewTeacherSEX.delete(0, 20)
+                self.NewTeacherOFFICE.delete(0, 20)
+                self.NewTeacherPHONE.delete(0, 20)
+                self.NewTeacherCOURSE.delete(0, 20)
 
     def add_Student(self):
         if Admin.flag == 'add_Student':
@@ -526,15 +526,16 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from Stu_Passwd where 学号 = '%s'"%self.NewStudentID.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "已存在该学生，添加失败！")
             self.NewStudentID.delete(0, 20)
+            self.NewStudentNAME.delete(0, 20)
             self.NewStudentMAJOR.delete(0, 20)
             self.NewStudentCLASS.delete(0, 20)
-            tkMessageBox.showinfo("error", "已存在该学生，添加失败！")
         else:
             sql1 = "insert into Stu_Passwd values(\'%s\', \'%s\')"%(self.NewStudentID.get(), self.NewStudentID.get())
             count1 = self.cursor.execute(sql1)
             self.db.commit()
-            sql2 = "insert into Student(学号, 专业代码, 班级代码) values(\'%s\', \'%s\', \'%s\')"%(self.NewStudentID.get(), self.NewStudentMAJOR.get(), self.NewStudentCLASS.get())
+            sql2 = "insert into Student(学号, 姓名,专业代码, 班级代码) values(\'%s\', \'%s\', \'%s\', \'%s\')"%(self.NewStudentID.get(),self.NewStudentNAME.get(), self.NewStudentMAJOR.get(), self.NewStudentCLASS.get())
             count2 = self.cursor.execute(sql2)
             self.db.commit()
             if count1 == 0 or count2 == 0:
@@ -545,16 +546,17 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
                 count1 = self.cursor.execute(sql)
                 self.db.commit()
 
-                self.NewStudentID.delete(0, 20)
-                self.NewStudentMAJOR.delete(0, 20)
-                self.NewStudentCLASS.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.NewStudentID.delete(0, 20)
+                self.NewStudentNAME.delete(0, 20)
                 self.NewStudentMAJOR.delete(0, 20)
                 self.NewStudentCLASS.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.NewStudentID.delete(0, 20)
+                self.NewStudentNAME.delete(0, 20)
+                self.NewStudentMAJOR.delete(0, 20)
+                self.NewStudentCLASS.delete(0, 20)
 
     def add_College(self):
         if Admin.flag == 'add_College':
@@ -569,26 +571,25 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from College where 学院代码 = '%s'"%self.NewCollegeID.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "已存在该学院，添加失败！")
             self.NewCollegeID.delete(0, 20)
             self.NewCollegeNAME.delete(0, 20)
             self.NewCollegePRESIDENT.delete(0, 20)
-            tkMessageBox.showinfo("error", "已存在该学院，添加失败！")
         else:
             sql = "insert into College values(\'%s\', \'%s\', \'%s\')"%\
 (self.NewCollegeID.get(), self.NewCollegeNAME.get(), self.NewCollegePRESIDENT.get())
             count = self.cursor.execute(sql)
             self.db.commit()
             if count == 0:
-                self.NewCollegeID.delete(0, 20)
-                self.NewCollegeNAME.delete(0, 20)
-                self.NewCollegePRESIDENT.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.NewCollegeID.delete(0, 20)
                 self.NewCollegeNAME.delete(0, 20)
                 self.NewCollegePRESIDENT.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.NewCollegeID.delete(0, 20)
+                self.NewCollegeNAME.delete(0, 20)
+                self.NewCollegePRESIDENT.delete(0, 20)
 
     def add_Major(self):
         if Admin.flag == 'add_Major':
@@ -603,26 +604,25 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from Major where 专业代码 = '%s'"%self.NewMajorID.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "已存在该专业，添加失败！")
             self.NewMajorID.delete(0, 20)
             self.NewMajorNAME.delete(0, 20)
             self.NewMajorCOLLEGE.delete(0, 20)
-            tkMessageBox.showinfo("error", "已存在该专业，添加失败！")
         else:
             sql = "insert into Major values(\'%s\', \'%s\', \'%s\')"%\
 (self.NewMajorID.get(), self.NewMajorNAME.get(), self.NewMajorCOLLEGE.get())
             count = self.cursor.execute(sql)
             self.db.commit()
             if count == 0:
-                self.NewMajorID.delete(0, 20)
-                self.NewMajorNAME.delete(0, 20)
-                self.NewMajorCOLLEGE.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.NewMajorID.delete(0, 20)
                 self.NewMajorNAME.delete(0, 20)
                 self.NewMajorCOLLEGE.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.NewMajorID.delete(0, 20)
+                self.NewMajorNAME.delete(0, 20)
+                self.NewMajorCOLLEGE.delete(0, 20)
 
     def add_TeacherOffice(self):
         if Admin.flag == 'add_TeacherOffice':
@@ -638,29 +638,28 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from TeacherOffice where 教研室代码 = '%s'"%self.NewTeacherOfficeID.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "已存在该教研室，添加失败！")
             self.NewTeacherOfficeID.delete(0, 20)
             self.NewTeacherOfficeNAME.delete(0, 20)
             self.NewTeacherOfficeLOCAL.delete(0, 20)
             self.NewTeacherOfficeCOLLEGE.delete(0, 20)
-            tkMessageBox.showinfo("error", "已存在该教研室，添加失败！")
         else:
             sql = "insert into TeacherOffice values(\'%s\', \'%s\', \'%s\', \'%s\')"%\
 (self.NewTeacherOfficeID.get(), self.NewTeacherOfficeNAME.get(), self.NewTeacherOfficeLOCAL.get(), self.NewTeacherOfficeCOLLEGE.get())
             count = self.cursor.execute(sql)
             self.db.commit()
             if count == 0:
-                self.NewTeacherOfficeID.delete(0, 20)
-                self.NewTeacherOfficeNAME.delete(0, 20)
-                self.NewTeacherOfficeLOCAL.delete(0, 20)
-                self.NewTeacherOfficeCOLLEGE.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.NewTeacherOfficeID.delete(0, 20)
                 self.NewTeacherOfficeNAME.delete(0, 20)
                 self.NewTeacherOfficeLOCAL.delete(0, 20)
                 self.NewTeacherOfficeCOLLEGE.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.NewTeacherOfficeID.delete(0, 20)
+                self.NewTeacherOfficeNAME.delete(0, 20)
+                self.NewTeacherOfficeLOCAL.delete(0, 20)
+                self.NewTeacherOfficeCOLLEGE.delete(0, 20)
 
  
 
@@ -679,19 +678,21 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from Class where 班级代码 = '%s'"%self.NewClassID.get()
         count = self.cursor.execute(sql)
         if count > 0:
+            tkMessageBox.showinfo("error", "已存在该班级，添加失败！")
             self.NewClassID.delete(0, 20)
             self.NewClassGRADE.delete(0, 20)
             self.NewClassCLASS.delete(0, 20)
             self.NewClassMAJOR.delete(0, 20)
             self.NewClassHEADMASTER.delete(0, 20)
             self.NewClassNUMBER.delete(0, 20)
-            tkMessageBox.showinfo("error", "已存在该班级，添加失败！")
+
         else:
             sql = "insert into Class values(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\')"%\
 (self.NewClassID.get(), self.NewClassGRADE.get(), self.NewClassCLASS.get(), self.NewClassMAJOR.get(), self.NewClassHEADMASTER.get(), self.NewClassNUMBER.get())
             count = self.cursor.execute(sql)
             self.db.commit()
             if count == 0:
+                tkMessageBox.showinfo("error", "添加失败！")
                 self.NewClassID.delete(0, 20)
                 self.NewClassGRADE.delete(0, 20)
                 self.NewClassCLASS.delete(0, 20)
@@ -699,15 +700,16 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
                 self.NewClassHEADMASTER.delete(0, 20)
                 self.NewClassNUMBER.delete(0, 20)
  
-                tkMessageBox.showinfo("error", "添加失败！")
+
             else:
+                tkMessageBox.showinfo("Message", "添加成功！")
                 self.NewClassID.delete(0, 20)
                 self.NewClassGRADE.delete(0, 20)
                 self.NewClassCLASS.delete(0, 20)
                 self.NewClassMAJOR.delete(0, 20)
                 self.NewClassHEADMASTER.delete(0, 20)
                 self.NewClassNUMBER.delete(0, 20)
-                tkMessageBox.showinfo("Message", "添加成功！")
+
 
 
     #删除模块响应函数
@@ -724,18 +726,18 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from Adm_Passwd where 管理员 = '%s'"%self.DeleteAdmin.get()
         count = self.cursor.execute(sql)
         if count == 0:
-            self.DeleteAdmin.delete(0, 20)
             tkMessageBox.showinfo("error", "不存在该管理员！")
+            self.DeleteAdmin.delete(0, 20)
         else:
             sql = "delete from Adm_Passwd where 管理员='%s'"%self.DeleteAdmin.get()
             count = self.cursor.execute(sql)
             self.db.commit()
             if count > 0:
-                self.DeleteAdmin.delete(0, 20)
                 tkMessageBox.showinfo("Message", "删除成功！")
-            else:
                 self.DeleteAdmin.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "删除失败！")
+                self.DeleteAdmin.delete(0, 20)
 
 
     def delete_Teacher(self):
@@ -781,10 +783,10 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
                 sql = "update Adm_Passwd set  密码='%s' where 管理员 ='%s'"%(self.NewPasswd1.get(),Admin.User)
                 self.cursor.execute(sql)
                 self.db.commit()
+                tkMessageBox.showinfo('Message', '修改成功')
                 self.OldPasswd.delete(0, 20)
                 self.NewPasswd1.delete(0, 20)
                 self.NewPasswd2.delete(0, 20)
-                tkMessageBox.showinfo('Message', '修改成功')
         else:
             tkMessageBox.showinfo('Message','passwd error')
 
@@ -802,34 +804,33 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
         sql = "select * from Tea_Passwd where 职工号 = '%s'"%self.ModifyTeacherID.get()
         count = self.cursor.execute(sql)
         if count == 0:
+            tkMessageBox.showinfo("error", "不存在该教师，修改失败！")
             self.ModifyTeacherID.delete(0, 20)
             self.ModifyTeacherNAME.delete(0, 20)
             self.ModifyTeacherSEX.delete(0, 20)
             self.ModifyTeacherOFFICE.delete(0, 20)
             self.ModifyTeacherCOURSE.delete(0, 20)
             self.ModifyTeacherPHONE.delete(0, 20)
-            tkMessageBox.showinfo("error", "不存在该教师，修改失败！")
         else:
             sql = "update Teacher set  姓名='%s',性别='%s',所在教研室='%s',任课='%s',电话='%s' where 职工号 ='%s'"%(self.ModifyTeacherNAME.get(), self.ModifyTeacherSEX.get(), self.ModifyTeacherOFFICE.get(), self.ModifyTeacherCOURSE.get(), self.ModifyTeacherPHONE.get(),self.ModifyTeacherID.get())
             count = self.cursor.execute(sql)
             self.db.commit()
             if count == 0:
-                self.ModifyTeacherID.delete(0, 20)
-                self.ModifyTeacherNAME.delete(0, 20)
-                self.ModifyTeacherSEX.delete(0, 20)
-                self.ModifyTeacherOFFICE.delete(0, 20)
-                self.ModifyTeacherCOURSE.delete(0, 20)
-                self.ModifyTeacherPHONE.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.ModifyTeacherID.delete(0, 20)
                 self.ModifyTeacherNAME.delete(0, 20)
                 self.ModifyTeacherSEX.delete(0, 20)
                 self.ModifyTeacherOFFICE.delete(0, 20)
                 self.ModifyTeacherCOURSE.delete(0, 20)
                 self.ModifyTeacherPHONE.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.ModifyTeacherID.delete(0, 20)
+                self.ModifyTeacherNAME.delete(0, 20)
+                self.ModifyTeacherSEX.delete(0, 20)
+                self.ModifyTeacherOFFICE.delete(0, 20)
+                self.ModifyTeacherCOURSE.delete(0, 20)
+                self.ModifyTeacherPHONE.delete(0, 20)
 
 
     def modify_Student(self):
@@ -855,16 +856,15 @@ self.NewCourseENDWEEK.get(), self.NewCourseBEGINTIME.get(), self.NewCourseENDTIM
             count = self.cursor.execute(sql)
             self.db.commit()
             if count == 0:
-                self.ModifyStudentID.delete(0, 20)
-                self.ModifyStudentMAJOR.delete(0, 20)
-                self.ModifyStudentCLASS.delete(0, 20)
- 
                 tkMessageBox.showinfo("error", "添加失败！")
-            else:
                 self.ModifyStudentID.delete(0, 20)
                 self.ModifyStudentMAJOR.delete(0, 20)
                 self.ModifyStudentCLASS.delete(0, 20)
+            else:
                 tkMessageBox.showinfo("Message", "添加成功！")
+                self.ModifyStudentID.delete(0, 20)
+                self.ModifyStudentMAJOR.delete(0, 20)
+                self.ModifyStudentCLASS.delete(0, 20)
 
     #查询模块响应函数
     def select_Admin(self):
